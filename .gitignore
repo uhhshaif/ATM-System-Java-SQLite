@@ -1,0 +1,11 @@
+# Compiled Java files
+*.class
+
+# Database file
+*.db
+
+# VS Code settings
+.vscode/
+
+# Logs
+*.log
