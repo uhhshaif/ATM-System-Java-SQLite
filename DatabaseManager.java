@@ -30,6 +30,8 @@ public class DatabaseManager {
                 + "pin INTEGER NOT NULL, "
                 + "balance REAL NOT NULL, "
                 + "current_loan REAL NOT NULL, "
+                + "interest_rate REAL NOT NULL DEFAULT 0, "
+                + "loan_due_date TEXT DEFAULT '', "
                 + "history TEXT"
                 + ")";
 
@@ -47,8 +49,8 @@ public class DatabaseManager {
 
     public static void insertAccount(BankAccount account) {
         String sql = "INSERT INTO accounts "
-                + "(account_number, account_holder_name, pin, balance, current_loan, history) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+                + "(account_number, account_holder_name, pin, balance, current_loan, interest_rate, loan_due_date, history) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -58,7 +60,9 @@ public class DatabaseManager {
             pstmt.setInt(3, account.getPin());
             pstmt.setDouble(4, account.getBalance());
             pstmt.setDouble(5, account.getCurrentLoan());
-            pstmt.setString(6, account.historyToString());
+            pstmt.setDouble(6, account.getInterestRate());
+            pstmt.setString(7, account.getLoanDueDate());
+            pstmt.setString(8, account.historyToString());
 
             pstmt.executeUpdate();
             System.out.println("DEBUG: Account inserted into database!");
@@ -75,6 +79,8 @@ public class DatabaseManager {
                 + "pin = ?, "
                 + "balance = ?, "
                 + "current_loan = ?, "
+                + "interest_rate = ?, "
+                + "loan_due_date = ?, "
                 + "history = ? "
                 + "WHERE account_number = ?";
 
@@ -85,8 +91,10 @@ public class DatabaseManager {
             pstmt.setInt(2, account.getPin());
             pstmt.setDouble(3, account.getBalance());
             pstmt.setDouble(4, account.getCurrentLoan());
-            pstmt.setString(5, account.historyToString());
-            pstmt.setString(6, account.getAccountNumber());
+            pstmt.setDouble(5, account.getInterestRate());
+            pstmt.setString(6, account.getLoanDueDate());
+            pstmt.setString(7, account.historyToString());
+            pstmt.setString(8, account.getAccountNumber());
 
             pstmt.executeUpdate();
 
@@ -110,6 +118,8 @@ public class DatabaseManager {
                 int pin = rs.getInt("pin");
                 double balance = rs.getDouble("balance");
                 double currentLoan = rs.getDouble("current_loan");
+                double interestRate = rs.getDouble("interest_rate");
+                String loanDueDate = rs.getString("loan_due_date");
                 String historyData = rs.getString("history");
 
                 ArrayList<String> history = BankAccount.historyFromString(historyData);
@@ -120,6 +130,8 @@ public class DatabaseManager {
                         pin,
                         balance,
                         currentLoan,
+                        interestRate,
+                        loanDueDate,
                         history
                 );
 

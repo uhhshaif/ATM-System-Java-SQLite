@@ -127,11 +127,17 @@ public class BankSystem {
             int enteredPin = sc.nextInt();
             sc.nextLine();
 
-            if (account.checkPin(enteredPin)) {
-                System.out.println("Login successful.");
-                ATM machine = new ATM(account, sc);
-                machine.startApp();
-                return;
+           if (account.checkPin(enteredPin)) {
+        System.out.println("Login successful.");
+
+     String reminder = account.getLoanReminder();
+        if (!reminder.isEmpty()) {
+        System.out.println(reminder);
+        }
+
+       ATM machine = new ATM(account, sc, accounts);
+        machine.startApp();
+        return;
             } else {
                 attempts++;
                 System.out.println("Wrong PIN. Attempts remaining: " + (3 - attempts));
